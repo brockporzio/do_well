@@ -7,8 +7,7 @@ const Layout = () => {
   const navigationLinks = [
     { to: "/", label: "Home" },
     { to: "/edit", label: "Edit" },
-    { to: "/login", label: "Login" },
-    { to: "/*", label: "noPage" }
+    { to: "/login", label: "Login" }
   ]
 
   return (
