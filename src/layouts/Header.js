@@ -1,9 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ navigationLinks }) => {
     return (
         <header>
-            <h1>This is the header</h1>
+            <nav>
+                <ul>
+                {navigationLinks.map(({ to, label }) => (
+                    <li key={to}>
+                        <Link to={to}>{label}</Link>
+                    </li>
+                ))}
+                </ul>
+            </nav>
         </header>
     );
 };
