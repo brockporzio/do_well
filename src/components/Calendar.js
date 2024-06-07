@@ -5,7 +5,7 @@ const daysInMonth = Array.from({ length: 28 }, (_, i) => i + 1); // Example for 
 
 const Calendar = () => {
   return (
-    <div className="container mx-auto p-4">
+    <div className="container border border-gray-800 max-w-lg mx-auto p-4">
       <div className="grid grid-cols-7 gap-1 text-center font-bold">
         {daysOfWeek.map((day) => (
           <div key={day} className="p-2 border border-gray-300 bg-gray-100">
