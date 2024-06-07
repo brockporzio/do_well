@@ -20,7 +20,9 @@
   "scripts": {
     "start": "concurrently \"npm run start:react\" \"npm run start:tailwind\"",
     "start:react": "react-scripts start",
-    "start:tailwind": "npx tailwindcss -i ./src/input.css -o ./public/output.css --watch"
+    "start:tailwind": "npx tailwindcss -i ./src/input.css -o ./public/output.css --watch",
+    "build": "npm run build:tailwind && react-scripts build",
+    "build:tailwind": "npx tailwindcss -i ./src/input.css -o ./public/output.css"
   },
   "eslintConfig": {
     "extends": [
