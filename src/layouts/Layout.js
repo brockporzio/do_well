@@ -11,11 +11,13 @@ const Layout = () => {
   ]
 
   return (
-    <>
-    <Header navigationLinks={ navigationLinks }></Header>
-      <Outlet/>
+    <div class="flex flex-col min-h-screen">
+      <Header navigationLinks={ navigationLinks }></Header>
+        <main class="flex-grow">
+          <Outlet/>
+        </main>
       <Footer></Footer>
-    </>
+    </div>
   )
 };
 
