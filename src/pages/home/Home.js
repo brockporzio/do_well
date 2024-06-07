@@ -1,7 +1,8 @@
 import React from "react";
+import Calendar from "../../components/Calendar";
 
 const Home = () => {
-    return <h1>Home</h1>;
+    return <Calendar></Calendar>;
   };
   
 export default Home;
