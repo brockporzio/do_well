@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { useTaskContext } from "../service/shared/TaskContext";
 import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
+import TaskType from "./TaskType";
 
 const TaskCreator = () => {
 
     const { addTask } = useTaskContext();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [taskType, setTaskType] = useState(TaskType.PERSONAL);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addTask( title, description );
+        addTask( title, description, taskType );
         setTitle("");
         setDescription("");
     }
@@ -36,12 +38,21 @@ const TaskCreator = () => {
                         maxLength={400}
                         rows={3}
                     />
+                    <select 
+                        value={taskType}
+                        onChange={(e) => setTaskType(e.target.value)}
+                        className="border p-2 m-2 w-5/6 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                            {Object.values(TaskType).map(type => (
+                                <option key={type} value={type}>{type}</option>
+                            ))}
+                    </select>    
                     <button 
                         type="submit" 
                         className="bg-blue-500 w-1/3 mt-[80px] text-white p-2 w-full rounded-md hover:bg-blue-600 transition-colors"
                     >   
                     Submit
-                    </button>                                   
+                    </button>                            
                 </form>
                 <input></input>
                 <input></input>
