@@ -5,9 +5,16 @@ import Login from "./pages/login/Login";
 import Edit from "./pages/edit/Edit";
 import NoPage from "./pages/noPage/NoPage";
 import Layout from "./layouts/Layout";
+import { ApolloProvider } from "@apollo/client";
+import client from "./apolloClient";
 
-export default function App() {
-  return (
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+console.log("%c: env. from index ", "color: red;", process.env)
+
+
+root.render(
+  <ApolloProvider client={client}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -18,8 +25,5 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+  </ApolloProvider>
+);

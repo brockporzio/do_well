@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Footer from "./Footer.js";
 import Header from "./Header.js";
+import TaskList from "../components/TaskList.js";
 
 const Layout = () => {
 
@@ -14,6 +15,7 @@ const Layout = () => {
     <div class="flex flex-col min-h-screen">
       <Header navigationLinks={ navigationLinks }></Header>
         <main class="flex-grow">
+          <TaskList/>
           <Outlet/>
         </main>
       <Footer></Footer>
