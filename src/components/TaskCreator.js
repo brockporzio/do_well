@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTaskContext } from "../service/shared/TaskContext";
-import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
+// import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import TaskType from "./TaskType";
 
 const TaskCreator = () => {
@@ -17,9 +17,20 @@ const TaskCreator = () => {
         setDescription("");
     }
 
+    const setBackgroundColor = (taskType) => {
+        switch(taskType){
+            case TaskType.PERSONAL: return 'bg-green-200';
+            case TaskType.WORK: return 'bg-red-200';
+            case TaskType.FITNESS: return 'bg-blue-200';
+            case TaskType.STUDY: return 'bg-orange-200';
+            case TaskType.SELF_LOVE: return 'bg-pink-200';
+            default: return 'bg-white';
+        }
+    };
+
     return (
         <>
-            <div className="border border-gray-800 max-w-md shadow-sm rounded-md mt-10">
+            <div className="border border-gray-800 max-w-md w-4/5  min-w-80 shadow-sm rounded-md mt-10">
                 <h2 className="text-lg font-semibold mb-4 text-center mt-4">Task Creator</h2>
                 <form className="grid grid-cols-1 justify-items-center" onSubmit={handleSubmit}>
                     <input
@@ -41,21 +52,19 @@ const TaskCreator = () => {
                     <select 
                         value={taskType}
                         onChange={(e) => setTaskType(e.target.value)}
-                        className="border p-2 m-2 w-5/6 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className={`border p-2 m-2 w-5/6 rounded-sm focus:outline-none focus:ring-2 ${setBackgroundColor(taskType)}`}
                     >
-                            {Object.values(TaskType).map(type => (
-                                <option key={type} value={type}>{type}</option>
-                            ))}
+                        {Object.values(TaskType).map(type => (
+                            <option key={type} value={type}>{type}</option>
+                        ))}
                     </select>    
                     <button 
                         type="submit" 
-                        className="bg-blue-500 w-1/3 mt-[80px] text-white p-2 w-full rounded-md hover:bg-blue-600 transition-colors"
+                        className="bg-blue-500 w-2/3 mt-[120px] mb-16 text-white p-2 w-full rounded-md hover:bg-blue-600 transition-colors"
                     >   
                     Submit
                     </button>                            
                 </form>
-                <input></input>
-                <input></input>
             </div>
         </>
     )

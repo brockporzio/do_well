@@ -4,7 +4,7 @@ import TaskType from './TaskType';
 
 const Task = ({ task, index }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
-        type: 'TASK',
+        type: 'Task',
         item: { task, index },
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
@@ -25,13 +25,13 @@ const Task = ({ task, index }) => {
     return (
         <div
             ref={drag}
-            className={`border p-4 rounded-md shadow-sm bg-white ${
+            // figure out centering
+            className={`border p-4 rounded-md shadow-sm flex items-center ${
                 isDragging ? 'opacity-50' : 'opacity-100'
             } ${setBackgroundColor(task.taskType)}`}
             style={{ cursor: 'move' }}
         >
             <h3 className="font-semibold">{task.title}</h3>
-            {/* <p className="text-sm">{task.description}</p> */}
         </div>
     );
 };

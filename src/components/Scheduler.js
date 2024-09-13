@@ -7,8 +7,8 @@ const Scheduler = () => {
 
     return (
         <div className="border border-gray-800 max-w-md shadow-sm rounded-md w-80 mt-10">
-            <h2>Scheduler</h2>
-            <div className="grid grid-cols-1 gap-4">
+            <h2 className="ext-lg font-semibold mb-4 text-center mt-4">Scheduler</h2>
+            <div className="grid grid-cols-1 gap-4 px-6 py-2 ">
                 {tasks.map((task, index) => (
                     <Task key={index} task={task} />
                 ))}
