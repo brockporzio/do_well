@@ -9,10 +9,14 @@ const TaskCreator = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [taskType, setTaskType] = useState(TaskType.PERSONAL);
+    const [taskId, setTaskId] = useState(Math.random().toString().slice(2,10));
+    const [completed, setCompleted] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addTask( title, description, taskType );
+        setTaskId(Math.random().toString().slice(2,10));
+        setCompleted(false);
+        addTask( title, description, taskType, taskId, completed );
         setTitle("");
         setDescription("");
     }

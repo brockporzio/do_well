@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useDrop } from 'react-dnd';
 import TaskType from './TaskType';
 
@@ -49,8 +49,12 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
         ...prevTask,
         [`${hour}-${dayIndex}`] : item.task
       }))
-      console.log(`Dropped task ${item.task.title} at hour-${hour}; day-${dayIndex}`);
-      console.log( `Task type: ${item.task.type} Task: ${item}`)
+      // console.log(`Dropped task ${item.task.title} at hour-${hour}; day-${dayIndex}`);
+      // console.log( `Task type: ${item.task.type} Task: ${item}`)
+      // console.log(`Task: ${item}`)
+      handleTaskAdded(item.task);
+      console.log('Item task', item.task)
+
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -67,7 +71,20 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
         default: return 'bg-white';
     }
   };
+
+  const handleTaskAdded = (task) => {
+    // console.log("Action triggered only when task is added:", task);
+    // Add any code you want to run when a task is added here
+  };
+
   const task = droppedTask[`${hour}-${dayIndex}`]
+
+  useEffect(() => {
+    if (task) {
+      console.log(`Dropped task ${task.title} at hour-${hour}; day-${dayIndex}`);
+      console.log(`Task type: ${task.taskId }`);
+    }
+  }, [task, hour, dayIndex]);
 
   return (
     <div
