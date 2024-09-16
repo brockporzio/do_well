@@ -1,19 +1,23 @@
+version: '3.8'
+
 services:
   website:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/do_well/website:latest
     volumes:
-      - website:/website/build  # build files will be added at this directory
+      - website:/website/build
 
   nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/do_well/nginx:latest
     ports:
       - "80:80"
     volumes:
-      - website:/usr/share/nginx/html/website  # Copy React App's build files to the Nginx directory
+      - website:/usr/share/nginx/html/website
 
 volumes:
   website:
