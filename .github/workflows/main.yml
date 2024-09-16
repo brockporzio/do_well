@@ -114,19 +114,25 @@ jobs:
           ls -al ./.env
           ls -al ./docker-compose.prod.yml          
 
-      - name: Deploy images on AWS EC2
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ./.env ./docker-compose.prod.yml ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }}:
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
-            echo "Files on EC2:"
-            ls -al
-            echo "Running Docker Compose commands"
-            docker-compose down --rmi all -v
-            docker login ghcr.io -u ${{ secrets.NAMESPACE }} -p ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-            docker pull $WEBSITE_IMAGE
-            docker pull $NGINX_IMAGE
-            docker-compose --env-file=.env -f docker-compose.prod.yml up -d
-            docker logout
-          EOF
+- name: Deploy images on AWS EC2
+  env:
+    SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+  run: |
+    # Copy the entire project directory
+    scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -r ./ ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }}:/home/ubuntu/Do_Well/
+
+    # SSH into the server and run commands
+    ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
+      echo "Files on EC2:"
+      cd /home/ubuntu/project/
+      ls -al
+
+      echo "Running Docker Compose commands"
+      docker-compose down --rmi all -v
+      docker login ghcr.io -u ${{ secrets.NAMESPACE }} -p ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      docker pull $WEBSITE_IMAGE
+      docker pull $NGINX_IMAGE
+      docker-compose --env-file=.env -f docker-compose.prod.yml up -d
+      docker logout
+    EOF
+
