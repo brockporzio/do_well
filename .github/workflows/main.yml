@@ -91,11 +91,14 @@ jobs:
           mkdir -p ~/.ssh
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-add - <<< "${{ secrets.PRIVATE_KEY }}"
+          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-add ~/.ssh/id_ed25519
 
+      # Debugging SSH Connectivity,
       - name: Check SSH connectivity and directory structure
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
             echo "Connected to EC2 instance"
             ls -al
             find / -name '*.yml'
@@ -106,8 +109,8 @@ jobs:
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
-          scp -o StrictHostKeyChecking=no -r ./.env ./docker-compose.prod.yml ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }}:
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ./.env ./docker-compose.prod.yml ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }}:
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
             echo "Files on EC2:"
             ls -al
             echo "Running Docker Compose commands"
