@@ -109,6 +109,11 @@ jobs:
             docker-compose --version
           EOF
 
+      - name: Check .env and docker-compose.prod.yml
+        run: |
+          ls -al ./.env
+          ls -al ./docker-compose.prod.yml          
+
       - name: Deploy images on AWS EC2
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
