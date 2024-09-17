@@ -143,7 +143,7 @@ jobs:
           # SSH into the server and run commands
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
             echo "Files on EC2:"
-            cd /home/ubuntu/project/
+            cd /home/ubuntu/Do_Well/
             ls -al
 
             echo "Running Docker Compose commands"
