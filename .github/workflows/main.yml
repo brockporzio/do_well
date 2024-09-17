@@ -147,7 +147,7 @@ jobs:
             ls -al
 
             echo "Running Docker Compose commands"
-            docker-compose down --rmi all -v
+            docker compose down --rmi all -v
             docker login ghcr.io -u ${{ secrets.NAMESPACE }} -p ${{ secrets.PERSONAL_ACCESS_TOKEN }}
             docker pull $WEBSITE_IMAGE
             docker pull $NGINX_IMAGE
