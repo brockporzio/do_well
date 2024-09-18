@@ -12,9 +12,9 @@ const Layout = () => {
   ]
 
   return (
-    <div class="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <Header navigationLinks={ navigationLinks }></Header>
-        <main class="flex-grow">
+        <main className="flex-grow">
           <TaskList/>
           <Outlet/>
         </main>

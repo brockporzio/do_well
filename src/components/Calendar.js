@@ -17,16 +17,15 @@ const Calendar = () => {
 
   useEffect(() => {
     if (data && data.task) {
-      console.log("data.tasks: ",data.task)
+      // console.log("data.tasks: ",data.task)
       const tasks = data.task.reduce((acc, task) => {
-        // console.log("task.taskLocation", task)
-        const location = JSON.parse(task.task_location.task_location_day_hour); // Parse the task location from the database
-        console.log("LOCATION: ", location)
-        acc[`${location.day}-${location.hour}`] = task; // Assign the task to the correct slot
+        const location = JSON.parse(task.task_location.task_location_day_hour); 
+        // console.log("LOCATION: ", location)
+        acc[`${location.day}-${location.hour}`] = task;
         return acc;
       }, {});
       console.log("LOOK tasks from accumulator: ", tasks)
-      setDroppedTask(tasks); // Populate the droppedTask state
+      setDroppedTask(tasks);
     }
 
     if (error) {
@@ -98,16 +97,13 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
 
 
   const handleTaskAdded = (task) => {
-    // Add task using the mutation function
-    addTask(task.taskId, task.task_name, task.taskType, task.description, 1, JSON.stringify({day:dayIndex,hour:hour}));
+    addTask(task.taskId, task.task_name, task.task_type, task.description, 1, JSON.stringify({day:dayIndex,hour:hour}));
 
-    // Optionally, you can handle the data, loading, or error here.
     if (loading) console.log('Loading...');
     if (error) console.error('Error sending task to API:', error);
     if (data) console.log('Task sent to API. Task Id:', data.insert_task.returning[0].task_id);
   };
 
-  console.log("***droppedtask: ", droppedTask)
   const task = droppedTask[`${dayIndex}-${hour}`]
 
   useEffect(() => {

@@ -28,7 +28,7 @@ const Task = ({ task, index }) => {
             // figure out centering
             className={`border p-4 rounded-md shadow-sm flex items-center ${
                 isDragging ? 'opacity-50' : 'opacity-100'
-            } ${setBackgroundColor(task.taskType)}`}
+            } ${setBackgroundColor(task.task_type)}`}
             style={{ cursor: 'move' }}
         >
             <h3 className="font-semibold">{task.task_name}</h3>

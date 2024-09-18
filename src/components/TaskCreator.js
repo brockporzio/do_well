@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useTaskContext } from "../service/shared/TaskContext";
-// import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import TaskType from "../models/TaskType";
 
 const TaskCreator = () => {
@@ -8,7 +7,7 @@ const TaskCreator = () => {
     const { addTask } = useTaskContext();
     const [task_name, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [taskType, setTaskType] = useState(TaskType.PERSONAL);
+    const [task_type, setTaskType] = useState(TaskType.PERSONAL);
     const [taskId, setTaskId] = useState(Math.random().toString().slice(2,10));
     const [completed, setCompleted] = useState(false);
 
@@ -16,7 +15,7 @@ const TaskCreator = () => {
         e.preventDefault();
         setTaskId(Math.random().toString().slice(2,10));
         setCompleted(false);
-        addTask( task_name, description, taskType, taskId, completed );
+        addTask( task_name, description, task_type, taskId, completed );
         setTitle("");
         setDescription("");
     }
@@ -54,9 +53,9 @@ const TaskCreator = () => {
                         rows={3}
                     />
                     <select 
-                        value={taskType}
+                        value={task_type}
                         onChange={(e) => setTaskType(e.target.value)}
-                        className={`border p-2 m-2 w-5/6 rounded-sm focus:outline-none focus:ring-2 ${setBackgroundColor(taskType)}`}
+                        className={`border p-2 m-2 w-5/6 rounded-sm focus:outline-none focus:ring-2 ${setBackgroundColor(task_type)}`}
                     >
                         {Object.values(TaskType).map(type => (
                             <option key={type} value={type}>{type}</option>
