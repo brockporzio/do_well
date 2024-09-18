@@ -63,7 +63,7 @@ const TaskCreator = () => {
                     </select>    
                     <button 
                         type="submit" 
-                        className="bg-blue-500 w-2/3 mt-[120px] mb-16 text-white p-2 w-full rounded-md hover:bg-blue-600 transition-colors"
+                        className="bg-blue-500 w-36 mt-[120px] mb-16 text-white p-2 w-full rounded-md hover:bg-blue-600 transition-colors"
                     >   
                     Submit
                     </button>                            

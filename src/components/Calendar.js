@@ -4,6 +4,7 @@ import { GET_TASKS_WITH_LOCATION } from '../service/graphql/graphql-service';
 import { useQuery } from '@apollo/client';
 import TaskType from '../models/TaskType';
 import TaskLocation from '../models/TaskLocation';
+import TaskModal from '../modal/CompleteModal';
 import { useInsertTask } from '../service/graphql/graphql-service';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -14,6 +15,8 @@ const Calendar = () => {
 
   const [droppedTask, setDroppedTask] = useState({});
   const { data, error } = useQuery(GET_TASKS_WITH_LOCATION);
+  const [ modalIsOpen, setModalIsOpen ] = useState(false);
+  const [ selectedTask, setSelectedTask ] = useState(null);
 
   useEffect(() => {
     if (data && data.task) {
@@ -32,6 +35,22 @@ const Calendar = () => {
       console.error('Error fetching tasks:', error);
     }
   }, [data, error]);
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setModalIsOpen(true);  
+  };
+
+  const handleConfirmComplete = () => {
+    if (selectedTask) {
+      console.log('Completing task:', selectedTask);
+      // if task is !completed then trigger service and pass task ID to update task to completed
+      // also mark task as completed using task context
+      setModalIsOpen(false); 
+      setSelectedTask(null);  
+    }
+    setModalIsOpen(false);
+  };
 
   return (
     <div className="container border border-gray-800 rounded-md max-w-xlg mx-auto p-4 mt-10">
@@ -54,16 +73,22 @@ const Calendar = () => {
                   droppedTask={droppedTask}
                   setDroppedTask={setDroppedTask} 
                   hoursOfTheDay={hoursOfTheDay[hourIndex]}
+                  onTaskClick={handleTaskClick}
                 />
             ))
           ))}
         </div>
       </div>
+      <TaskModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        onConfirm={handleConfirmComplete}
+      />
     </div>
   );
 };
 
-const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay}) => {
+const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, onTaskClick }) => {
   const [{ isOver }, drop ] = useDrop(()=>({
     accept: 'Task',
     drop: (item) => {
@@ -118,6 +143,7 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
       ref={drop}
       id={`hour-${hour}-day-${dayIndex}`}
       className={`relative w-full h-12 p-2 pt-4 border ${task ? setBackgroundColor(task.task_type) : 'bg-white'} ${isOver ? 'opacity-75' : ''}`}
+      onClick={() => task && onTaskClick(task)}
     >
       <div className="absolute top-1 left-1 text-xxs text-gray-600">
         {hoursOfTheDay}
