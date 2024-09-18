@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useTaskContext } from "../service/shared/TaskContext";
 // import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
-import TaskType from "./TaskType";
+import TaskType from "../models/TaskType";
 
 const TaskCreator = () => {
 
     const { addTask } = useTaskContext();
-    const [title, setTitle] = useState("");
+    const [task_name, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [taskType, setTaskType] = useState(TaskType.PERSONAL);
     const [taskId, setTaskId] = useState(Math.random().toString().slice(2,10));
@@ -16,7 +16,7 @@ const TaskCreator = () => {
         e.preventDefault();
         setTaskId(Math.random().toString().slice(2,10));
         setCompleted(false);
-        addTask( title, description, taskType, taskId, completed );
+        addTask( task_name, description, taskType, taskId, completed );
         setTitle("");
         setDescription("");
     }
@@ -40,7 +40,7 @@ const TaskCreator = () => {
                     <input
                         type= "text"
                         placeholder="Task Title"
-                        value={title}
+                        value={task_name}
                         onChange={(e) => setTitle(e.target.value)}
                         className="border p-2 m-2 w-5/6 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />

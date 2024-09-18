@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
-import TaskType from './TaskType';
+import TaskType from '../models/TaskType';
 
 const Task = ({ task, index }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
@@ -31,7 +31,7 @@ const Task = ({ task, index }) => {
             } ${setBackgroundColor(task.taskType)}`}
             style={{ cursor: 'move' }}
         >
-            <h3 className="font-semibold">{task.title}</h3>
+            <h3 className="font-semibold">{task.task_name}</h3>
         </div>
     );
 };
