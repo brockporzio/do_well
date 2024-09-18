@@ -54,6 +54,8 @@ jobs:
         run: |
           echo "WEBSITE_IMAGE=${{env.WEBSITE_IMAGE}}" >> $GITHUB_ENV
           echo "NGINX_IMAGE=${{env.NGINX_IMAGE}}" >> $GITHUB_ENV
+          echo "REACT_APP_HASURA_ENDPOINT=${{ secrets.REACT_APP_HASURA_ENDPOINT }}" >> $GITHUB_ENV
+          echo "REACT_APP_HASURA_ADMIN_SECRET=${{ secrets.REACT_APP_HASURA_ADMIN_SECRET }}" >> $GITHUB_ENV
       
       - name: Log in to GitHub Packages
         env:
@@ -143,11 +145,11 @@ jobs:
           # SSH into the server and run commands
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_EC2_IP_ADDRESS }} << EOF
             echo "Files on EC2:"
-            cd /home/ubuntu/project/
+            cd /home/ubuntu/Do_Well/
             ls -al
 
             echo "Running Docker Compose commands"
-            docker-compose down --rmi all -v
+            docker compose down --rmi all -v
             docker login ghcr.io -u ${{ secrets.NAMESPACE }} -p ${{ secrets.PERSONAL_ACCESS_TOKEN }}
             docker pull $WEBSITE_IMAGE
             docker pull $NGINX_IMAGE
