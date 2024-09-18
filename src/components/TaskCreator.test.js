@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import TaskCreator from './TaskCreator';
 import { useTaskContext } from '../service/shared/TaskContext';
-import TaskType from './TaskType';
+import TaskType from '../models/TaskType';
 
 // Mock the useTaskContext hook
 jest.mock('../service/shared/TaskContext', () => ({

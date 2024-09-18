@@ -1,7 +1,10 @@
 import React, { useState, useEffect} from 'react';
 import { useDrop } from 'react-dnd';
-import TaskType from './TaskType';
-
+import { GET_TASKS_WITH_LOCATION } from '../service/graphql/graphql-service';
+import { useQuery } from '@apollo/client';
+import TaskType from '../models/TaskType';
+import TaskLocation from '../models/TaskLocation';
+import { useInsertTask } from '../service/graphql/graphql-service';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const hoursInDay = Array.from({ length: 8 }, (_, i) => i + 1);
@@ -10,6 +13,25 @@ const hoursOfTheDay = ['8:00', '9:00', '10:00', '11:00', '12:00', '1:00', '2:00'
 const Calendar = () => {
 
   const [droppedTask, setDroppedTask] = useState({});
+  const { data, error } = useQuery(GET_TASKS_WITH_LOCATION);
+
+  useEffect(() => {
+    if (data && data.task) {
+      // console.log("data.tasks: ",data.task)
+      const tasks = data.task.reduce((acc, task) => {
+        const location = JSON.parse(task.task_location.task_location_day_hour); 
+        // console.log("LOCATION: ", location)
+        acc[`${location.day}-${location.hour}`] = task;
+        return acc;
+      }, {});
+      console.log("LOOK tasks from accumulator: ", tasks)
+      setDroppedTask(tasks);
+    }
+
+    if (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  }, [data, error]);
 
   return (
     <div className="container border border-gray-800 rounded-md max-w-xlg mx-auto p-4 mt-10">
@@ -27,7 +49,7 @@ const Calendar = () => {
                 <TimeSlot 
                   key={`${dayIndex}-${hour}`} 
                   className="border border-gray-300"
-                  dayIndex={dayIndex} 
+                  dayIndex={1+dayIndex} 
                   hour={hour}
                   droppedTask={droppedTask}
                   setDroppedTask={setDroppedTask} 
@@ -47,13 +69,12 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
     drop: (item) => {
       setDroppedTask((prevTask) => ({
         ...prevTask,
-        [`${hour}-${dayIndex}`] : item.task
+        [`${dayIndex}-${hour}`] : item.task
       }))
-      // console.log(`Dropped task ${item.task.title} at hour-${hour}; day-${dayIndex}`);
-      // console.log( `Task type: ${item.task.type} Task: ${item}`)
-      // console.log(`Task: ${item}`)
+      
       handleTaskAdded(item.task);
       console.log('Item task', item.task)
+      console.log("TaskLocation", TaskLocation.Day);
 
     },
     collect: (monitor) => ({
@@ -72,17 +93,23 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
     }
   };
 
+  const { addTask, data, loading, error } = useInsertTask();
+
+
   const handleTaskAdded = (task) => {
-    // console.log("Action triggered only when task is added:", task);
-    // Add any code you want to run when a task is added here
+    addTask(task.taskId, task.task_name, task.task_type, task.description, 1, JSON.stringify({day:dayIndex,hour:hour}));
+
+    if (loading) console.log('Loading...');
+    if (error) console.error('Error sending task to API:', error);
+    if (data) console.log('Task sent to API. Task Id:', data.insert_task.returning[0].task_id);
   };
 
-  const task = droppedTask[`${hour}-${dayIndex}`]
+  const task = droppedTask[`${dayIndex}-${hour}`]
 
   useEffect(() => {
     if (task) {
-      console.log(`Dropped task ${task.title} at hour-${hour}; day-${dayIndex}`);
-      console.log(`Task type: ${task.taskId }`);
+      // console.log(`Dropped task ${task.title} at hour-${hour}; day-${dayIndex}`);
+      // console.log(`Task type: ${task.taskId }`);
     }
   }, [task, hour, dayIndex]);
 
@@ -90,7 +117,7 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
     <div
       ref={drop}
       id={`hour-${hour}-day-${dayIndex}`}
-      className={`relative w-full h-12 p-2 pt-4 border ${task ? setBackgroundColor(task.taskType) : 'bg-white'} ${isOver ? 'opacity-75' : ''}`}
+      className={`relative w-full h-12 p-2 pt-4 border ${task ? setBackgroundColor(task.task_type) : 'bg-white'} ${isOver ? 'opacity-75' : ''}`}
     >
       <div className="absolute top-1 left-1 text-xxs text-gray-600">
         {hoursOfTheDay}
@@ -99,10 +126,10 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay})
       {task && (
         <div
           className="flex justify-center items-center h-full w-full "
-          title={task.title} 
+          title={task.task_name} 
         >
           <span className="task-title text-xs w-full text-center truncate">
-            {task.title}
+            {task.task_name}
           </span>
         </div>
       )}
