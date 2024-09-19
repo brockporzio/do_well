@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/client';
 import TaskType from '../models/TaskType';
 import TaskLocation from '../models/TaskLocation';
 import TaskModal from '../modal/CompleteModal';
-import { useInsertTask, useDeActivateTask} from '../service/graphql/graphql-service';
+import { useInsertTask, useDeActivateTask, useMarkTaskComplete } from '../service/graphql/graphql-service';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const hoursInDay = Array.from({ length: 8 }, (_, i) => i + 1);
@@ -43,11 +43,19 @@ const Calendar = () => {
     setModalIsOpen(true);  
   };
 
+  const { markComplete, data: markCompleteData, loading: markCompleteLoading, error: markCompleteError } = useMarkTaskComplete();
+
   const handleConfirmComplete = () => {
-    if (selectedTask) {
+    if (selectedTask && selectedTask.task_id) {
+      markComplete(selectedTask.task_id)
+      .then((result) => {
+        console.log('Task marked as complete:', result);
+        refetch();
+      })
+      .catch((err) => {
+        console.error('Error marking task as complete:', err);
+      });
       console.log('Completing task:', selectedTask);
-      // if task is !completed then trigger service and pass task ID to update task to completed
-      // also mark task as completed using task context
       setModalIsOpen(false); 
       setSelectedTask(null);  
     }
@@ -110,15 +118,17 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, 
     }),
   }))
 
-  const setBackgroundColor = (taskType) => {
-    switch(taskType){
-        case TaskType.PERSONAL: return 'bg-green-200';
-        case TaskType.WORK: return 'bg-red-200';
-        case TaskType.FITNESS: return 'bg-blue-200';
-        case TaskType.STUDY: return 'bg-orange-200';
-        case TaskType.SELF_LOVE: return 'bg-pink-200';
-        default: return 'bg-white';
+  const setBackgroundColor = (taskType, isCompleted) => {
+    let color;
+    switch (taskType) {
+      case TaskType.PERSONAL: color = isCompleted ? 'bg-green-200/50' : 'bg-green-500'; break;
+      case TaskType.WORK: color = isCompleted ? 'bg-red-200/50' : 'bg-red-500'; break;
+      case TaskType.FITNESS: color = isCompleted ? 'bg-blue-200/50' : 'bg-blue-500'; break;
+      case TaskType.STUDY: color = isCompleted ? 'bg-orange-200/50' : 'bg-orange-500'; break;
+      case TaskType.SELF_LOVE: color = isCompleted ? 'bg-pink-200/50' : 'bg-pink-500'; break;
+      default: color = 'bg-white';
     }
+    return color;
   };
 
   const { addTask, data, loading, error } = useInsertTask();
@@ -158,7 +168,7 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, 
     <div
       ref={drop}
       id={`hour-${hour}-day-${dayIndex}`}
-      className={`relative w-full h-12 p-2 pt-4 border ${task ? setBackgroundColor(task.task_type) : 'bg-white'} ${isOver ? 'opacity-75' : ''}`}
+      className={`relative w-full h-12 p-2 pt-4 border ${task ? setBackgroundColor(task.task_type, task.task_complete) : 'bg-white'} ${isOver ? 'opacity-75' : ''}`}
       onClick={() => task && onTaskClick(task)}
     >
       <div className="absolute top-1 left-1 text-xxs text-gray-600">

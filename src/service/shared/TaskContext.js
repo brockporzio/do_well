@@ -10,8 +10,8 @@ export const TaskProvider = ({ children }) => {
     const [tasks, setTasks] = useState([]);
     const [calendarTasks, setCalendarTasks] = useState({});
 
-    const addTask = ( task_name, description, task_type, task_id, completed, active ) => {
-        const newTask = { task_name, description, task_type, task_id, completed, active };
+    const addTask = ( task_name, description, task_type, task_id, task_complete, active ) => {
+        const newTask = { task_name, description, task_type, task_id, task_complete, active };
         setTasks([...tasks, newTask]);
     };
 

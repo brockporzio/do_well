@@ -3,7 +3,7 @@ import { useDrag } from 'react-dnd';
 import TaskType from '../models/TaskType';
 
 const Task = ({ task, index }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
+    const [{ isDragging }, drag, preview ] = useDrag(() => ({
         type: 'Task',
         item: { task, index },
         collect: (monitor) => ({

@@ -9,15 +9,15 @@ const TaskCreator = () => {
     const [description, setDescription] = useState("");
     const [task_type, setTaskType] = useState(TaskType.PERSONAL);
     const [task_id, setTaskId] = useState(Math.random().toString().slice(2,10));
-    const [completed, setCompleted] = useState(false);
-    const [active, setActive] = useState(false);
+    const [task_complete, setCompleted] = useState(false);
+    const [active, setActive] = useState(true);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setTaskId(Math.random().toString().slice(2,10));
         setCompleted(false);
-        setActive(false);
-        addTask( task_name, description, task_type, task_id, completed, active );
+        setActive(true)
+        addTask( task_name, description, task_type, task_id, task_complete, active );
         setTitle("");
         setDescription("");
     }
@@ -65,7 +65,7 @@ const TaskCreator = () => {
                     </select>    
                     <button 
                         type="submit" 
-                        className="bg-blue-500 w-36 mt-[120px] mb-16 text-white p-2 w-full rounded-md hover:bg-blue-600 transition-colors"
+                        className="bg-blue-500 w-36 mt-[120px] mb-16 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
                     >   
                     Submit
                     </button>                            
