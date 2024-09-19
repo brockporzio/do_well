@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/client';
 import TaskType from '../models/TaskType';
 import TaskLocation from '../models/TaskLocation';
 import TaskModal from '../modal/CompleteModal';
-import { useInsertTask } from '../service/graphql/graphql-service';
+import { useInsertTask, useDeActivateTask} from '../service/graphql/graphql-service';
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const hoursInDay = Array.from({ length: 8 }, (_, i) => i + 1);
@@ -14,14 +14,16 @@ const hoursOfTheDay = ['8:00', '9:00', '10:00', '11:00', '12:00', '1:00', '2:00'
 const Calendar = () => {
 
   const [droppedTask, setDroppedTask] = useState({});
-  const { data, error } = useQuery(GET_TASKS_WITH_LOCATION);
+  const { data, error, refetch } = useQuery(GET_TASKS_WITH_LOCATION);
   const [ modalIsOpen, setModalIsOpen ] = useState(false);
   const [ selectedTask, setSelectedTask ] = useState(null);
 
   useEffect(() => {
     if (data && data.task) {
       // console.log("data.tasks: ",data.task)
-      const tasks = data.task.reduce((acc, task) => {
+         // Filter tasks where task.task_active is true
+      const activeTasks = data.task.filter(task => task.task_active);
+      const tasks = activeTasks.reduce((acc, task) => {
         const location = JSON.parse(task.task_location.task_location_day_hour); 
         // console.log("LOCATION: ", location)
         acc[`${location.day}-${location.hour}`] = task;
@@ -74,6 +76,7 @@ const Calendar = () => {
                   setDroppedTask={setDroppedTask} 
                   hoursOfTheDay={hoursOfTheDay[hourIndex]}
                   onTaskClick={handleTaskClick}
+                  refetch={refetch}
                 />
             ))
           ))}
@@ -88,7 +91,7 @@ const Calendar = () => {
   );
 };
 
-const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, onTaskClick }) => {
+const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, onTaskClick, refetch}) => {
   const [{ isOver }, drop ] = useDrop(()=>({
     accept: 'Task',
     drop: (item) => {
@@ -122,11 +125,24 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, 
 
 
   const handleTaskAdded = (task) => {
-    addTask(task.taskId, task.task_name, task.task_type, task.description, 1, JSON.stringify({day:dayIndex,hour:hour}));
+    addTask(task.task_id, task.task_name, task.task_type, task.description, 1, JSON.stringify({day:dayIndex,hour:hour}));
 
     if (loading) console.log('Loading...');
     if (error) console.error('Error sending task to API:', error);
     if (data) console.log('Task sent to API. Task Id:', data.insert_task.returning[0].task_id);
+  };
+  
+  const { deactivate, data: deactivateData, loading: deactivateLoading, error: deactivateError } = useDeActivateTask();
+
+  const deactivateTaskHandler = async (task) => {
+    if (task.task_id) {
+      try {
+        await deactivate(task.task_id); 
+        await refetch();
+      } catch (err) {
+        console.error('Error deactivating task:', err);
+      }
+    }
   };
 
   const task = droppedTask[`${dayIndex}-${hour}`]
@@ -148,6 +164,19 @@ const TimeSlot = ({ dayIndex, hour, droppedTask, setDroppedTask, hoursOfTheDay, 
       <div className="absolute top-1 left-1 text-xxs text-gray-600">
         {hoursOfTheDay}
       </div>
+      {task && (
+      <div
+        className="absolute top-0 right-1 text-xxs text-gray-600 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          deactivateTaskHandler(task);
+          console.log('Task deleted or handle deletion logic here');
+          console.log(task);
+        }}
+      >
+        x
+      </div>
+    )}
       
       {task && (
         <div

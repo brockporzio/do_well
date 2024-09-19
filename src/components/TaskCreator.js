@@ -8,14 +8,16 @@ const TaskCreator = () => {
     const [task_name, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [task_type, setTaskType] = useState(TaskType.PERSONAL);
-    const [taskId, setTaskId] = useState(Math.random().toString().slice(2,10));
+    const [task_id, setTaskId] = useState(Math.random().toString().slice(2,10));
     const [completed, setCompleted] = useState(false);
+    const [active, setActive] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setTaskId(Math.random().toString().slice(2,10));
         setCompleted(false);
-        addTask( task_name, description, task_type, taskId, completed );
+        setActive(false);
+        addTask( task_name, description, task_type, task_id, completed, active );
         setTitle("");
         setDescription("");
     }

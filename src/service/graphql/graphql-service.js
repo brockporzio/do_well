@@ -26,6 +26,7 @@ export const GET_TASKS_WITH_LOCATION = gql`
       task_id
       task_name
       task_type
+      task_active
       task_location {
         task_location_day_hour
         task_location_task_id
@@ -34,8 +35,16 @@ export const GET_TASKS_WITH_LOCATION = gql`
 
   }
 `;
-
+ 
 // Mutations
+export const DE_ACTIVATE_TASK = gql`
+  mutation DeactivateTask($task_id: Int!) {
+    update_task_by_pk(pk_columns: {task_id: $task_id}, _set: {task_active: false}) {
+      task_id
+    }
+  }
+`;
+
 export const INSERT_TASK = gql`
   mutation InsertTask(
     $task_id: Int!,
@@ -76,6 +85,19 @@ export function useGetTasksForUser() {
 export function useGetAllTasks() {
   const { data, loading, error } = useQuery(GET_ALL_TASKS);
   return { data, loading, error };
+}
+
+export function useDeActivateTask() {
+    const [deactivateTask, { data, loading, error }] = useMutation(DE_ACTIVATE_TASK);
+
+    const deactivate = (task_id) => {
+        deactivateTask({
+            variables: {
+                task_id,
+            }
+        })
+    };
+    return { deactivate, data, loading, error }
 }
 
 export function useInsertTask() {
