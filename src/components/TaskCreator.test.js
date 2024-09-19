@@ -66,7 +66,8 @@ describe('TaskCreator Component', () => {
             'Task Description',  // description
             TaskType.PERSONAL,   // task type
             expect.any(String),  // taskId (generated)
-            false  // completed (always false on submit)
+            false,  // completed (always false on submit)
+            true,  // active
         );
     });
 
